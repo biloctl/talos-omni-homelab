@@ -122,25 +122,27 @@ repo, so it reads as an actual platform, not a writeup.
 ```
 talos-omni-homelab/
 ├── docs/
-│   ├── tasks/                     the 11 narrated runbooks
+│   ├── tasks/                        the 11 narrated runbooks
 │   ├── glossary.md
 │   └── reference-cluster-hand-built.md
-├── clusters/omni-cluster/         what runs on the cluster
-│   ├── omni-cluster-template.yaml   cluster-as-code (Omni): versions, node roles, patches
-│   ├── storage/                     Rook-Ceph CephCluster + BlockPool/StorageClass
+├── clusters/omni-cluster/            what runs on the cluster
+│   ├── omni-cluster-template.yaml      cluster-as-code (Omni): versions, roles, patches
+│   ├── storage/                        Rook-Ceph CephCluster + BlockPool/StorageClass
 │   ├── metrics-server/ · monitoring/   Helm values (HPA metrics; Prometheus/Grafana)
-│   ├── argocd/apps/                 one Argo Application per component (incl. MetalLB)
-│   ├── argocd/vault/                ESO SecretStores + ExternalSecrets (creds by reference)
-│   ├── autoscaling/                 KEDA ScaledObject
-│   ├── apps/demo-app/ · apps/datadog/   v1 + v2 Deployments, DestinationRule, PodMonitor; DatadogAgent CR
-│   ├── metallb/                     IPAddressPool + L2Advertisement (Argo-owned)
-│   ├── istio/                       Helm values (istiod, cni, gateway, kiali) + Gateway/VirtualService,
-│   │                                PeerAuthentication, ServiceEntry (hand-applied; Argo adoption is debt)
-│   ├── kubevirt/                    KubeVirt + CDI CRs, DataVolume, VirtualMachine, RDP Service
-│   ├── rbac/ · netpol/              authorization + segmentation (NetworkPolicies inert on flannel)
-├── terraform/                     Cloudflare DNS as IaC (brownfield import)
-├── src/demo-app/                  Go service + multi-stage distroless Dockerfile
-└── .github/workflows/             CI: build → push GHCR → bump manifest → Argo syncs
+│   ├── argocd/apps/                    one Argo Application per component (incl. MetalLB)
+│   ├── argocd/vault/                   ESO SecretStores + ExternalSecrets (creds by ref)
+│   ├── autoscaling/                    KEDA ScaledObject
+│   ├── apps/demo-app/                  v1 + v2 Deployments, DestinationRule, PodMonitor
+│   ├── apps/datadog/                   DatadogAgent CR
+│   ├── metallb/                        IPAddressPool + L2Advertisement (Argo-owned)
+│   ├── istio/                          Helm values (istiod, cni, gateway, kiali) +
+│   │                                   Gateway/VirtualService, PeerAuthentication,
+│   │                                   ServiceEntry (hand-applied; Argo adoption is debt)
+│   ├── kubevirt/                       KubeVirt + CDI CRs, DataVolume, VM, RDP Service
+│   ├── rbac/ · netpol/                 authz + segmentation (NetworkPolicies inert on flannel)
+├── terraform/                        Cloudflare DNS as IaC (brownfield import)
+├── src/demo-app/                     Go service + multi-stage distroless Dockerfile
+└── .github/workflows/                CI: build → push GHCR → bump manifest → Argo syncs
 ```
 
 These manifests are a **structural reference, not a one-command deploy** — some assume live

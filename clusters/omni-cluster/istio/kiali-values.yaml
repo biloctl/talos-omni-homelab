@@ -1,0 +1,5 @@
+auth:
+  strategy: anonymous          # lab-only
+external_services:
+  prometheus:
+    url: http://kube-prometheus-stack-prometheus.monitoring.svc:9090

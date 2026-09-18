@@ -1,0 +1,10 @@
+apiVersion: networking.istio.io/v1
+kind: ServiceEntry
+metadata:
+  name: github-api
+  namespace: demo-app
+spec:
+  hosts: ["api.github.com"]
+  ports:
+    - { number: 443, name: https, protocol: TLS }
+  resolution: DNS

@@ -1,0 +1,4 @@
+# clusters/omni-cluster/istio/cni-values.yaml
+cni:
+  resources:
+    requests: { cpu: 50m, memory: 100Mi }

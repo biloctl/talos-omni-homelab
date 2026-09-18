@@ -1,0 +1,10 @@
+# NOTE: inert on flannel (no NetworkPolicy enforcement). Authored for portability/intent;
+# enforces the day a policy-capable CNI (Calico/Cilium) is in place.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-ingress
+  namespace: demo-app
+spec:
+  podSelector: {}          # {} = ALL pods in the namespace
+  policyTypes: [Ingress]   # empty ingress rules below = deny all inbound

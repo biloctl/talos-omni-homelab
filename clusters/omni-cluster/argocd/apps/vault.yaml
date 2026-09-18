@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata: { name: vault, namespace: argocd }
+spec:
+  project: default
+  source:
+    repoURL: https://helm.releases.hashicorp.com   # public Helm repo (no cred)
+    chart: vault
+    targetRevision: 0.34.0                          # CHART version (ships Vault app v2.0.3)
+    helm:
+      values: |
+        server:
+          ha:
+            enabled: true
+            raft: { enabled: true }
+            replicas: 1                # single-node Raft; scale later
+          dataStorage:
+            enabled: true
+            size: 2Gi
+            storageClassName: rook-ceph-block
+          extraEnvironmentVars:
+            VAULT_DISABLE_MLOCK: "true"           # guidance w/ integrated storage; dodges IPC_LOCK vs Talos PSA
+        injector: { enabled: false }              # ESO route, not the sidecar injector
+  destination: { server: https://kubernetes.default.svc, namespace: vault }
+  syncPolicy:
+    automated: { prune: true, selfHeal: true }
+    syncOptions: [ CreateNamespace=true ]

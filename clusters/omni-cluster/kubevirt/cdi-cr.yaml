@@ -1,0 +1,14 @@
+apiVersion: cdi.kubevirt.io/v1beta1
+kind: CDI
+metadata:
+  name: cdi
+spec:
+  config:
+    scratchSpaceStorageClass: rook-ceph-block
+    podResourceRequirements:
+      requests:
+        cpu: "100m"
+        memory: "512Mi"
+      limits:
+        cpu: "1"
+        memory: "2Gi"

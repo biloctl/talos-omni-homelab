@@ -1,0 +1,50 @@
+name: build demo-app
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/demo-app/**'
+      - '.github/workflows/build-demo-app.yaml'
+
+permissions:
+  contents: write      # needed by the update-manifest job's commit-back
+  packages: write      # needed to push to GHCR
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: ./src/demo-app
+          build-args: VERSION=${{ github.sha }}
+          push: true
+          tags: ghcr.io/example-user/demo-app:${{ github.sha }}
+
+  update-manifest:
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Bump image tag in manifest
+        run: |
+          sed -i "s|image: ghcr.io/example-user/demo-app:.*|image: ghcr.io/example-user/demo-app:${{ github.sha }}|" \
+            clusters/omni-cluster/apps/demo-app/deployment.yaml
+      - name: Commit and push the bump
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add clusters/omni-cluster/apps/demo-app/deployment.yaml
+          git commit -m "ci: bump demo-app image to ${{ github.sha }}"
+          git push

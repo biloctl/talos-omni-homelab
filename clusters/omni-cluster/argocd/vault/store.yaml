@@ -1,0 +1,14 @@
+apiVersion: external-secrets.io/v1
+kind: SecretStore
+metadata: { name: vault, namespace: argocd }
+spec:
+  provider:
+    vault:
+      server: "http://vault.vault.svc:8200"   # in-cluster, plain HTTP (lab)
+      path: "secret"                            # kv-v2 MOUNT path (NO data/)
+      version: "v2"
+      auth:
+        kubernetes:
+          mountPath: "kubernetes"               # auth/kubernetes
+          role: "argocd-repo"                   # -> policy argocd-repo-ro
+          # ESO uses its OWN ServiceAccount token by default — no secretRef needed

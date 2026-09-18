@@ -1,0 +1,15 @@
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata: { name: web, namespace: scaling-demo }
+spec:
+  scaleTargetRef: { name: web }
+  minReplicaCount: 1
+  maxReplicaCount: 10
+  cooldownPeriod: 60
+  triggers:
+  - type: prometheus
+    metadata:
+      serverAddress: http://kube-prometheus-stack-prometheus.monitoring.svc:9090
+      metricName: http_requests_per_second
+      query: sum(rate(http_requests_total{app="web"}[1m]))
+      threshold: "10"    # ~10 req/s PER replica

@@ -1,0 +1,23 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: demo-app-readonly
+  namespace: demo-app
+rules:
+  - apiGroups: ["", "apps"]                 # "" = core (pods, services), "apps" = deployments
+    resources: ["pods", "services", "deployments", "replicasets"]
+    verbs: ["get", "list", "watch"]         # NO create/delete = read-only
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: demo-app-readonly
+  namespace: demo-app
+subjects:
+  - kind: Group                              # an OIDC/SSO group (e.g. StrongDM-federated) or an SA
+    name: sre-readonly
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: demo-app-readonly
+  apiGroup: rbac.authorization.k8s.io

@@ -1,0 +1,24 @@
+apiVersion: datadoghq.com/v2alpha1
+kind: DatadogAgent
+metadata:
+  name: datadog
+  namespace: datadog
+spec:
+  global:
+    site: datadoghq.com                    # US1 — matches app.datadoghq.com
+    credentials:
+      apiSecret:
+        secretName: datadog-secret         # out-of-band Secret (API key), referenced by name only
+        keyName: api-key
+  features:
+    logCollection:
+      enabled: true
+      containerCollectAll: false           # SCOPED — billing guardrail
+    apm:
+      enabled: false                       # off — traces are the fastest billable volume
+    externalMetricsServer:
+      enabled: false                       # DELIBERATE — KEDA owns external.metrics.k8s.io
+    liveProcessCollection:
+      enabled: false
+  # NOTE: the node-agent DaemonSet is deferred on Talos (host-mount friction);
+  # the Cluster Agent runs and forwards to the SaaS. See docs/tasks/task07-datadog.md.

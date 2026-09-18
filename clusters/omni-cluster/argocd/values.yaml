@@ -1,0 +1,4 @@
+crds: { install: true, keep: true }     # keep CRDs on uninstall so Applications aren't nuked
+configs:
+  params:
+    server.insecure: true               # plain HTTP for localhost port-forward (lab)

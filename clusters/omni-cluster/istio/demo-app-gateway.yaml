@@ -1,0 +1,37 @@
+apiVersion: networking.istio.io/v1
+kind: Gateway
+metadata:
+  name: demo-app-gateway
+  namespace: demo-app
+spec:
+  selector:
+    istio: ingressgateway        # which gateway pods this binds to (by label)
+  servers:
+    - port: { number: 80, name: http, protocol: HTTP }
+      hosts: ["demo.example.com"]
+    - port: { number: 443, name: https, protocol: HTTPS }
+      hosts: ["demo.example.com"]
+      tls:
+        mode: SIMPLE
+        credentialName: example-com-wildcard
+---
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: demo-app
+  namespace: demo-app
+spec:
+  hosts: ["demo.example.com"]
+  gateways: [demo-app-gateway]
+  http:
+    - route:
+        - destination:
+            host: demo-app
+            subset: v1
+            port: { number: 80 }
+          weight: 90
+        - destination:
+            host: demo-app
+            subset: v2
+            port: { number: 80 }
+          weight: 10

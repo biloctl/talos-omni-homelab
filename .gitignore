@@ -1,0 +1,24 @@
+# Never commit credentials or state — by file SHAPE, not vocabulary
+*.asc
+*.key
+*.pem
+*.tfstate
+*.tfstate.*
+*.tfvars
+*.secret
+cloudflare.ini
+talosconfig
+omni-talosconfig*
+kubeconfig
+*.kubeconfig
+
+# Terraform
+**/.terraform/*
+!.terraform.lock.hcl
+crash.log
+
+# Editor / OS noise
+.DS_Store
+*.swp
+.idea/
+.vscode/

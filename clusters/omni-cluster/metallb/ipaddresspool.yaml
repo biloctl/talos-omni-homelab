@@ -1,0 +1,18 @@
+# ipaddresspool.yaml
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: lab-pool
+  namespace: metallb-system
+spec:
+  addresses:
+    - 192.0.2.211-192.0.2.221
+---
+# same file or separate: l2advertisement.yaml
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: lab-l2
+  namespace: metallb-system
+spec:
+  ipAddressPools: [lab-pool]

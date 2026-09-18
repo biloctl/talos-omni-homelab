@@ -1,0 +1,10 @@
+pilot:
+  resources:
+    requests: { cpu: 100m, memory: 256Mi }
+meshConfig:
+  accessLogFile: /dev/stdout      # Envoy access logs on — you'll want them for debugging
+  outboundTrafficPolicy:
+    mode: REGISTRY_ONLY
+cni:
+  enabled: true
+  provider: default

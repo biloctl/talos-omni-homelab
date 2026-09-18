@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-app
+  namespace: demo-app
+  labels: { app: demo-app }
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: demo-app }
+  template:
+    metadata:
+      labels: { app: demo-app }
+    spec:
+      imagePullSecrets:
+        - name: ghcr-pull                # materialized from Vault by ESO (see argocd/vault/)
+      containers:
+        - name: demo-app
+          image: ghcr.io/example-user/demo-app:<sha>
+          ports:
+            - { name: http, containerPort: 8080 }
+          resources:
+            requests: { cpu: 50m, memory: 32Mi }
+            limits:   { memory: 64Mi }

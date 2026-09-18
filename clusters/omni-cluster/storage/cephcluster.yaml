@@ -1,0 +1,17 @@
+apiVersion: ceph.rook.io/v1
+kind: CephCluster
+metadata: {name: rook-ceph, namespace: rook-ceph}
+spec:
+  cephVersion: {image: quay.io/ceph/ceph:v19.2.4, allowUnsupported: false}
+  dataDirHostPath: /var/lib/rook        # the Talos bind-mount from the node-prep patch
+  mon: {count: 3, allowMultiplePerNode: false}
+  mgr: {count: 2, modules: [{name: rook, enabled: true}]}
+  dashboard: {enabled: true, ssl: true}
+  storage:
+    useAllNodes: true
+    useAllDevices: false                # protects the OS disk (sda)
+    devices: [{name: "sdb"}]            # only the raw disk -> one OSD per worker
+  resources:
+    osd:  {requests: {cpu: "500m", memory: "2Gi"}, limits: {memory: "4Gi"}}
+    mon:  {requests: {cpu: "250m", memory: "1Gi"}}
+    mgr:  {requests: {cpu: "250m", memory: "512Mi"}}

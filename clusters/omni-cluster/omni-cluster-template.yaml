@@ -1,0 +1,99 @@
+kind: Cluster
+name: omni-cluster
+kubernetes:
+  version: v1.36.2
+talos:
+  version: v1.13.6
+patches:
+  - idOverride: 200-omni-cluster
+    inline:
+      machine:
+        time:
+          servers:
+            - 198.51.100.20            # internal NTP (external NTP/UDP is blocked)
+---
+kind: ControlPlane
+machines:
+  - MACHINE-ID-CP-1
+  - MACHINE-ID-CP-2
+  - MACHINE-ID-CP-3
+---
+kind: Workers
+machines:
+  - MACHINE-ID-WORKER-1
+  - MACHINE-ID-WORKER-2
+  - MACHINE-ID-WORKER-3
+patches:
+  - name: rook-ceph-node-prep
+    inline:
+      machine:
+        kernel:
+          modules:
+            - name: rbd      # Ceph block device (RBD) client
+            - name: ceph     # Ceph kernel client (CephFS, future-proofing)
+        kubelet:
+          extraMounts:
+            - destination: /var/lib/rook
+              type: bind
+              source: /var/lib/rook
+              options:
+                - bind
+                - rshared
+                - rw
+        sysctls:
+          net.core.rmem_max: "8388608"   # network buffer tuning (optional)
+          net.core.wmem_max: "8388608"
+---
+kind: Machine
+name: MACHINE-ID-WORKER-1
+patches:
+  - name: hostname
+    inline:
+      machine:
+        network:
+          hostname: worker01
+---
+kind: Machine
+name: MACHINE-ID-WORKER-2
+patches:
+  - name: hostname
+    inline:
+      machine:
+        network:
+          hostname: worker02
+---
+kind: Machine
+name: MACHINE-ID-WORKER-3
+patches:
+  - name: hostname
+    inline:
+      machine:
+        network:
+          hostname: worker03
+---
+kind: Machine
+name: MACHINE-ID-CP-1
+patches:
+  - name: hostname
+    inline:
+      machine:
+        network:
+          hostname: master01
+---
+kind: Machine
+name: MACHINE-ID-CP-2
+patches:
+  - name: hostname
+    inline:
+      machine:
+        network:
+          hostname: master02
+---
+kind: Machine
+name: MACHINE-ID-CP-3
+patches:
+  - name: hostname
+    inline:
+      machine:
+        network:
+          hostname: master03
